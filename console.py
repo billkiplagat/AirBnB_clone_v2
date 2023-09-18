@@ -140,7 +140,7 @@ class HBNBCommand(cmd.Cmd):
                 value = value.replace('_', ' ')
                 if value.startswith('"') and value.endswith('"'):
                     # Remove double quotes and unescape escaped double quotes
-                    value = value[1:-1].replace('\\"', '"')
+                    value = value[1:-1].replace('"', '\"')
                     # Check if the value is a float
                 elif re.match(r'^\d+\.\d+$', value):
                     value = float(value)
