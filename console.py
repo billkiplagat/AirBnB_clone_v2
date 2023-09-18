@@ -130,14 +130,14 @@ class HBNBCommand(cmd.Cmd):
         if class_name not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-        attributes = {}
+        attributes = []
         for param in params:
             # match key=value pairs
             match = re.match(r'^([^=]+)=(.+)$', param)
             if match:
                 key, value = match.groups()
                 # Replace underscores with spaces in the key
-                key = key.replace('_', ' ')
+                value = value.replace('_', ' ')
                 if value.startswith('"') and value.endswith('"'):
                     # Remove double quotes and unescape escaped double quotes
                     value = value[1:-1].replace('\\"', '"')
@@ -148,11 +148,12 @@ class HBNBCommand(cmd.Cmd):
                 elif re.match(r'^\d+$', value):
                     value = int(value)
                 else:
-                    continue
-                attributes[key] = value
-        new_instance = HBNBCommand.classes[class_name](**attributes)
+                    pass
+                attributes.append(value)
+        new_instance = HBNBCommand.classes[class_name](*attributes)
         storage.save()
         print(new_instance.id)
+
     def help_create(self):
         """ Help information for the create method """
         print("Creates a class of any type")
@@ -350,5 +351,3 @@ class HBNBCommand(cmd.Cmd):
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
-
-
