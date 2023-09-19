@@ -32,13 +32,15 @@ class DBStorage:
             Base.metadata.drop_all(self.__engine)
 
         self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'
-                                      .format(db_user, db_pwd, db_host, db_name),
+                                      .format(db_user, db_pwd,
+                                              db_host, db_name),
                                       pool_pre_ping=True)
         if db_env == "test":
             return
 
-        if os.getenv("HBNB_MYSQL_USER") and os.getenv("HBNB_MYSQL_PWD") and os.getenv("HBNB_MYSQL_HOST") and os.getenv(
-                "HBNB_MYSQL_DB"):
+        if (os.getenv("HBNB_MYSQL_USER") and os.getenv("HBNB_MYSQL_PWD")
+                and os.getenv("HBNB_MYSQL_HOST") and os.getenv(
+                "HBNB_MYSQL_DB")):
             Base.metadata.create_all(self.__engine)
             Session = sessionmaker(bind=self.__engine, expire_on_commit=False)
             self.__session = scoped_session(Session)
@@ -47,7 +49,8 @@ class DBStorage:
         """ Query objects from the database """
         result = {}
         if cls is None:
-            classes = [user.User, state.State, city.City, amenity.Amenity, place.Place, review.Review]
+            classes = [user.User, state.State, city.City,
+                       amenity.Amenity, place.Place, review.Review]
         else:
             classes = [cls]
 
@@ -73,7 +76,8 @@ class DBStorage:
             self.__session.delete(obj)
 
     def reload(self):
-        """ Create all tables in the database and create a new database session """
+        """ Create all tables in the database
+        and create a new database session """
         Base.metadata.create_all(self.__engine)
         Session = sessionmaker(bind=self.__engine, expire_on_commit=False)
         self.__session = scoped_session(Session)
