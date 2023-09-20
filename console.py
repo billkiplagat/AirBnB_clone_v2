@@ -130,7 +130,7 @@ class HBNBCommand(cmd.Cmd):
         if class_name not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-        attributes = []
+        attributes = {}
         for param in params:
             # match key=value pairs
             match = re.match(r'^([^=]+)=(.+)$', param)
@@ -149,9 +149,10 @@ class HBNBCommand(cmd.Cmd):
                     value = int(value)
                 else:
                     pass
-                attributes.append(value)
-        new_instance = HBNBCommand.classes[class_name](*attributes)
-        storage.save()
+                # attributes.append(value)
+                attributes[key] = value
+        new_instance = HBNBCommand.classes[class_name](**attributes)
+        new_instance.save()
         print(new_instance.id)
 
     def help_create(self):
@@ -226,22 +227,20 @@ class HBNBCommand(cmd.Cmd):
         print("[Usage]: destroy <className> <objectId>\n")
 
     def do_all(self, args):
-        """ Shows all objects, or all objects of a class"""
-        print_list = []
+        """Shows all objects, or all objects of a class"""
 
         if args:
-            args = args.split(' ')[0]  # remove possible trailing args
-            if args not in HBNBCommand.classes:
-                print("** class doesn't exist **")
+            class_name = args.split(' ')[0]  # Extract the class name
+            if class_name not in HBNBCommand.classes:
+                print("** Class doesn't exist **")
                 return
-            for k, v in storage._FileStorage__objects.items():
-                if k.split('.')[0] == args:
-                    print_list.append(str(v))
-        else:
-            for k, v in storage._FileStorage__objects.items():
-                print_list.append(str(v))
 
-        print(print_list)
+            objects = storage.all(HBNBCommand.classes[class_name])
+        else:
+            # If no class name specified, get all objects
+            objects = storage.all()
+        for obj in objects.values():
+            print(obj)
 
     def help_all(self):
         """ Help information for the all command """
