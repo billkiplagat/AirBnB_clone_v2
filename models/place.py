@@ -1,13 +1,22 @@
 #!/usr/bin/python3
 """ Place Module for HBNB project """
 from models.base_model import BaseModel, Base
-from sqlalchemy import Column, Integer, String, ForeignKey, Float
+from sqlalchemy import Column, Integer, Table, String, ForeignKey, Float, PrimaryKeyConstraint
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 import os
 from models.review import Review
-from models.user import User
+from models.amenity import Amenity
 from models.city import City
+
+# Define the place_amenity table
+place_amenity = Table(
+    'place_amenity',
+    Base.metadata,
+    Column('place_id', String(60), ForeignKey('places.id'), primary_key=True, nullable=False),
+    Column('amenity_id', String(60), ForeignKey('amenities.id'), primary_key=True, nullable=False),
+    PrimaryKeyConstraint('place_id', 'amenity_id')
+)
 
 
 class Place(BaseModel, Base):
@@ -30,7 +39,8 @@ class Place(BaseModel, Base):
     # Define the relationship for DBStorage
     if os.getenv('HBNB_TYPE_STORAGE') == 'db':
         reviews = relationship("Review", backref="place", cascade="delete")
-        # Define the getter attribute for FileStorage
+        amenities = relationship("Amenity", secondary=place_amenity, viewonly=False, back_populates="place_amenity")
+    # Define the getter attribute for FileStorage
     else:
         @property
         def reviews(self):
@@ -45,3 +55,25 @@ class Place(BaseModel, Base):
                     review_list.append(review)
             return review_list
 
+    @property
+    def amenities(self):
+        """
+        Getter attribute for amenities in FileStorage
+        Returns a list of Amenity instances based on amenity_ids
+        """
+        from models import storage
+        amenity_list = []
+        for amenity_id in self.amenity_ids:
+            amenity = storage.get(Amenity, amenity_id)
+            if amenity:
+                amenity_list.append(amenity)
+        return amenity_list
+
+    @amenities.setter
+    def amenities(self, amenity_obj):
+        """
+        Setter attribute for amenities in FileStorage
+        Appends Amenity.id to amenity_ids if amenity_obj is an Amenity object
+        """
+        if isinstance(amenity_obj, Amenity):
+            self.amenity_ids.append(amenity_obj.id)
