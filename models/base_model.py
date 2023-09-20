@@ -48,18 +48,8 @@ class BaseModel:
         dictionary.update(self.__dict__)
         dictionary.update(
                 {'__class__': (str(type(self)).split('.')[-1]).split('\'')[0]})
-
-        # Check if 'created_at' is a string or a datetime object
-        if isinstance(self.created_at, str):
-            dictionary['created_at'] = self.created_at
-        else:
-            dictionary['created_at'] = self.created_at.isoformat()
-
-        # Check if 'updated_at' is a string or a datetime object
-        if isinstance(self.updated_at, str):
-            dictionary['updated_at'] = self.updated_at
-        else:
-            dictionary['updated_at'] = self.updated_at.isoformat()
+        dictionary['created_at'] = self.created_at.isoformat()
+        dictionary['updated_at'] = self.updated_at.isoformat()
         if '_sa_instance_state' in dictionary:
             del dictionary['_sa_instance_state']
         return dictionary
