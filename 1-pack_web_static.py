@@ -4,9 +4,9 @@ Fabric script that generates a tgz archive from the contents of the web_static
 folder of the AirBnB Clone repo
 """
 
-
 from fabric.operations import local
 from datetime import datetime
+from collections.abc import Mapping
 
 
 def do_pack():
