@@ -2,8 +2,8 @@
 import paramiko
 import os
 
-local_project_path = '/home/bill/Dev/personal BnB/AirBnB_clone_v2/web_static/103-index.html'
-remote_project_path = '/data/web_static/current'
+local_project_path = '/home/bill/Dev/AirBnB_clone_v2/web_static'
+remote_project_path = '/data/web_static/current/test'
 # Define server information
 # "nginx_config_path": "/etc/nginx/sites-available/default"
 server_configs = [
@@ -23,7 +23,19 @@ server_configs = [
 ]
 
 
-def upload_project_to_server(server_config):
+def upload_folder_contents(local_path, remote_path, sftp):
+    for item in os.listdir(local_path):
+        local_item_path = os.path.join(local_path, item)
+        remote_item_path = os.path.join(remote_path, item)
+        if os.path.isfile(local_item_path):
+            sftp.put(local_item_path, remote_item_path)
+            print(f"Uploaded {item} to {remote_item_path}")
+        elif os.path.isdir(local_item_path):
+            sftp.mkdir(remote_item_path)
+            upload_folder_contents(local_item_path, remote_item_path, sftp)
+
+
+def upload_folder_to_server(server_config):
     try:
         # Create an SSH client instance
         ssh = paramiko.SSHClient()
@@ -40,18 +52,18 @@ def upload_project_to_server(server_config):
         # Create an SFTP client instance
         sftp = ssh.open_sftp()
 
-        # Upload the project folder to the server
-        sftp.put(local_project_path, os.path.join(remote_project_path, os.path.basename(local_project_path)))
+        # Upload the entire local folder and its contents to the remote directory
+        upload_folder_contents(local_project_path, remote_project_path, sftp)
 
         # Close the SFTP and SSH connections
         sftp.close()
         ssh.close()
 
-        print(f"Uploaded project to {server_config['hostname']} successfully.")
+        print(f"Uploaded folder and its contents to {server_config['hostname']} successfully.")
     except Exception as e:
         print(f"Error uploading to {server_config['hostname']}: {str(e)}")
 
 
 if __name__ == "__main__":
     for server_config in server_configs:
-        upload_project_to_server(server_config)
+        upload_folder_to_server(server_config)
