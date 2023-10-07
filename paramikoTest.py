@@ -34,7 +34,6 @@ def upload_folder_contents(local_path, remote_path, sftp):
             sftp.mkdir(remote_item_path)
             upload_folder_contents(local_item_path, remote_item_path, sftp)
 
-
 def upload_folder_to_server(server_config):
     try:
         # Create an SSH client instance
