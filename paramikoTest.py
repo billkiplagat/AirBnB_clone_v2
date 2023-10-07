@@ -3,7 +3,7 @@ import paramiko
 import os
 
 local_project_path = '/home/bill/Dev/AirBnB_clone_v2/web_static'
-remote_project_path = '/data/web_static/current/test'
+remote_project_path = '/data/web_static/current'
 # Define server information
 # "nginx_config_path": "/etc/nginx/sites-available/default"
 server_configs = [
@@ -33,6 +33,7 @@ def upload_folder_contents(local_path, remote_path, sftp):
         elif os.path.isdir(local_item_path):
             sftp.mkdir(remote_item_path)
             upload_folder_contents(local_item_path, remote_item_path, sftp)
+
 
 def upload_folder_to_server(server_config):
     try:
