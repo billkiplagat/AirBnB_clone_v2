@@ -31,7 +31,7 @@ def c_with_text(text):
 
 @app.route('/python/', defaults={'text': 'is cool'}, strict_slashes=False)
 @app.route('/python/<text>', strict_slashes=False)
-def c_with_text(text):
+def python_with_text(text):
     """ Fourth Route that display Python and text"""
     text = re.sub(r'_', ' ', text)
     return 'Python {}'.format(text)
