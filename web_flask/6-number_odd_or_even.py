@@ -2,7 +2,7 @@
 """
 Script that starts a Flask web application:
 listening on 0.0.0.0, port 5000
-with Fifth routes
+with Routes
 """
 from flask import Flask, render_template
 import re
@@ -45,11 +45,15 @@ def number_is_integer(n):
 
 @app.route('/number_template/<int:n>', strict_slashes=False)
 def number_template(n):
+    """Returns a template at the /number_template/<n> route,
+        expanding route"""
     return render_template('5-number.html', number=n)
 
 
-@app.route('/number_odd_or_even/<int:n>')
+@app.route('/number_odd_or_even/<int:n>', strict_slashes=False)
 def number_odd_or_even(n):
+    """Returns a template at the /number_odd_or_even/<n>
+        route, display if the number is odd or even"""
     odd_or_even = 'even' if n % 2 == 0 else 'odd'
     return render_template('6-number_odd_or_even.html', number=n, odd_or_even=odd_or_even)
 
