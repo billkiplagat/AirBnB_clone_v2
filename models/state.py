@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 """ State Module for HBNB project """
+from models import storage
 from models.base_model import BaseModel, Base
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
@@ -21,4 +22,4 @@ class State(BaseModel, Base):
         for city in city_instances:
             if city.state_id == self.id:
                 matching_cities.append(city)
-        return (matching_cities)
+        return matching_cities
